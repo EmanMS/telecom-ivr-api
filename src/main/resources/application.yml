@@ -1,0 +1,50 @@
+server:
+  port: 8085
+  error:
+    # The whitelabel page is HTML. The IVR can only parse JSON, so it is switched off and
+    # JsonErrorController answers /error instead.
+    whitelabel:
+      enabled: false
+
+spring:
+  application:
+    name: telecom-ivr-api
+
+
+  # ==========================================
+  # Database & JPA Configuration
+  # ==========================================
+  datasource:
+    url: jdbc:mysql://localhost:3306/TelecomDb?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+    username: root
+    password: root  
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      # Automatically creates and updates tables (customers, transactions) from Java Entities
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+  mvc:
+    # Turn an unmatched URL into an exception the @RestControllerAdvice can render as JSON,
+    # rather than letting the container produce its own response.
+    throw-exception-if-no-handler-found: true
+  web:
+    resources:
+      # No static content is served by this API; disabling the mappings makes an unknown URL a
+      # clean 404 instead of a fruitless classpath scan.
+      add-mappings: false
+  jackson:
+    # Never omit a field, even when null: the IVR reads fixed JSON paths and a missing key is
+    # treated as a parse failure.
+    default-property-inclusion: always
+
+logging:
+  level:
+    root: INFO
+    com.vodafone.ivr: INFO
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%thread] %logger{36} - %msg%n"
